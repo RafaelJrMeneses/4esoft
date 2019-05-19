@@ -24,9 +24,19 @@ public class Server {
 			do {
 				comandoDoClient = fromClient.nextLine();
 				toClient.println("ECHO FROM SERVER: [" + comandoDoClient + "]");
-
-				if (comandoDoClient.equals("sair")) {
-					System.out.println("Server Finalizado!");
+				if (comandoDoClient.equals("lista")) {
+					System.out.println("Lista de todos os arquivos");
+					try {
+						File raiz = new File("c:/repo");
+						percorreRecursivo(raiz);
+						System.out.println("Lista finalizada...");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					if (comandoDoClient.equals("sair")) {
+						System.out.println("Server Finalizado!");
+					}
 				}
 				toClient.flush();
 			} while (!comandoDoClient.equals("sair"));
