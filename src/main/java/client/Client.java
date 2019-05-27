@@ -10,19 +10,35 @@ public class Client {
 		client.start();
 	}
 	private void start() {
+		Socket socket = null;
+		PrintWriter toServer = null;
+		Scanner fromServer = null;
+		Scanner console = new Scanner(System.in);
+		String comando = null;
+		String resposta = null;
 		try {
-			Scanner console = new Scanner(System.in);
-			Socket server = new Socket("localhost", 9091);
-			PrintWriter toServer = new PrintWriter(server.getOutputStream());
-			Scanner fromServer = new Scanner(server.getInputStream());
 			do {
 				System.out.println("==> ");
-				String comando = console.nextLine();
-				toServer.println(comando);
-				toServer.flush();
-				String resposta = fromServer.nextLine();
-				System.out.println("Resposta do server: " + resposta);
-			} while (true);
+				comando = console.nextLine();
+				if (comando.equals("connect")) {
+					socket = new Socket("localhost", 9091);
+					toServer = new PrintWriter(socket.getOutputStream());
+					fromServer = new Scanner(socket.getInputStream());
+					System.out.println(fromServer.nextLine());
+				} else if (comando.equals("disconnect")) {
+					if (socket != null && socket.isConnected()) {
+						toServer.println(comando);
+						toServer.flush();
+						socket.close();
+					}
+					else if(comando.startsWith("ls")) {
+						toServer.println(comando);
+						toServer.flush();
+						resposta = fromServer.nextLine();
+						System.out.println(resposta);
+					}
+				}
+			} while (comando.equals("sair"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -23,12 +23,13 @@ public class Server {
 			String comandoDoClient = "";
 			do {
 				comandoDoClient = fromClient.nextLine();
-				toClient.println("ECHO FROM SERVER: [" + comandoDoClient + "]");
-				if (comandoDoClient.equals("lista")) {
+				if (comandoDoClient.equals("ls")) {
 					System.out.println("Lista de todos os arquivos");
 					try {
 						File raiz = new File("c:/repo");
-						percorreRecursivo(raiz);
+						String ls = percorreRecursivo(raiz);
+						toClient.println(ls);
+						toClient.flush();
 						System.out.println("Lista finalizada...");
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -45,12 +46,14 @@ public class Server {
 		}
 	}
 
-	private static void percorreRecursivo(File entrada) {
+	private String percorreRecursivo(File entrada) {
 		System.out.println(entrada.getName());
+		String lista = null;
 		if (entrada.isDirectory()) {
 			for (File arquivo : entrada.listFiles()) {
-				percorreRecursivo(arquivo);
+				lista = percorreRecursivo(arquivo);
 			}
 		}
+		return lista;
 	}
 }
